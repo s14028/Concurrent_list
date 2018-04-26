@@ -9,7 +9,6 @@
 #include "partition.h"
 #include "semaphore.h"
 #include "atomic.h"
-#include "priority_queue.h"
 #include "lock.h"
 
 template <typename T>
@@ -314,7 +313,6 @@ private:
 	{
 		partitions.emplace_back(index);
 		auto partition = std::prev(partitions.end());
-
 		return *partition;
 	}
 };
