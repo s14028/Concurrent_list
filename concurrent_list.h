@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <iostream>
 #include <set>
 #include <functional>
@@ -235,20 +236,12 @@ private:
 
 	auto elements_to_remove(auto last)
 	{
+		auto begin = elements.begin();
+		std::advance(begin, (*last).begin() + (*last).size());
 		if(last == partitions.begin())
 		{
-			return std::make_pair(elements.begin(), ++last);
+			++last;
 		}
-
-		auto prev = std::prev(last);
-		if((*last).size() > 0)
-		{
-			prev++;
-			last++;
-		}
-
-		auto begin = elements.begin();
-		std::advance(begin, (*prev).begin() + (*prev).size());
 		return std::make_pair(begin, last);
 	}
 
@@ -271,7 +264,6 @@ private:
 	auto remove(auto left, auto right)
 	{
 		unsigned int last_size = (*left).size();
-		unsigned int last_left_size = last_size;
 
 		auto current = std::next(left);
 
@@ -284,7 +276,6 @@ private:
 
 		for(; current != right; current++)
 		{
-			last_left_size = last_size;
 			std::advance(from, Partition::max_length - last_size);
 			count = from;
 			std::advance(count, (*current).size());
@@ -294,15 +285,15 @@ private:
 
 			while(from != count)
 			{
+				if((*left).size() == Partition::max_length)
+				{
+					left++;
+				}
+
 				std::iter_swap(to, from);
 				from++;
 				to++;
 				(*left).add_element();
-
-				if((*left).size() >= Partition::max_length)
-				{
-					left++;
-				}
 			}
 		}
 
@@ -316,6 +307,7 @@ private:
 		return *partition;
 	}
 };
+
 
 template <typename T>
 void* garbage_collector(void* arguments)
